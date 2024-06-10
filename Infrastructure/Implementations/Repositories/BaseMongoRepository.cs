@@ -1,6 +1,7 @@
 ﻿using EcoTech.Contexts;
 using EcoTech.Implementations.Interfaces;
 using EcoTech.Models;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
