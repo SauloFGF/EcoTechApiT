@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace EcoTech.Controllers
+namespace Infrastructure.Controllers
 {
     [Authorize]
     public abstract class BaseController(ILogger<BaseController> logger) : ControllerBase

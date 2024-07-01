@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EcoTech.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using EcoTech.Models;
+using Infrastructure.Encrypt;
 
 namespace Infrastructure.Models
 {
     public abstract class BaseUserModel : BaseModel
     {
-        protected BaseUserModel()
+        protected BaseUserModel(string cpf, string password)
         {
+            Cpf = cpf ?? throw new ArgumentNullException(nameof(cpf));
+            Password = password ?? throw new ArgumentNullException(nameof(password));
+
+            GeneratePassword(Password);
 
         }
 
@@ -20,7 +19,7 @@ namespace Infrastructure.Models
 
         public virtual void GeneratePassword(string password)
         {
-            //Password = PasswordHasher.HashPassword;
+            Password = PasswordHasher.HashPassword(password);
         }
     }
 }
