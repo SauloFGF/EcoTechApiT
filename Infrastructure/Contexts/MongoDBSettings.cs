@@ -1,7 +1,7 @@
-﻿namespace EcoTech.Contexts
+﻿namespace Infrastructure.Contexts
 {
     public class MongoDBSettings
     {
-        public string MongoConnectionString { get; set; } = null;
+        public string MongoConnectionString { get; set; } = "mongodb://localhost:27017";
     }
 }
