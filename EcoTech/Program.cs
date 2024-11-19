@@ -11,7 +11,8 @@ builder.Services.AddMvc();
 builder.Services.AddControllers();
 builder.Services.AddDependencyInjection();
 builder.Services.useMongoDbConventions();
-
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 builder.Services.Configure<MongoDBSettings>(configuration.GetSection("DataBase"));
 builder.Services.AddSingleton<EcoTechAppMongoDbContext>();
 
