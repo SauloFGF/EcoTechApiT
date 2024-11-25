@@ -1,29 +1,42 @@
+using AspNetCore.Identity.MongoDbCore.Infrastructure;
 using EcoTech.Configurations;
 using EcoTech.Contexts;
+using EcoTech.Models;
 using Infrastructure.Contexts;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
-// Add services to the container.
+builder.Services.Configure<MongoDbSettings>(
+    configuration.GetSection("MongoDbSettings"));
 
-builder.Services.AddMvc();
-builder.Services.AddControllers();
-builder.Services.AddDependencyInjection();
-builder.Services.useMongoDbConventions();
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-builder.Services.Configure<MongoDBSettings>(configuration.GetSection("DataBase"));
+builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return new MongoClient(settings.ConnectionString);
+});
+
+builder.Services.AddSingleton<IMongoDatabase>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(settings.DatabaseName);
+});
+
 builder.Services.AddSingleton<EcoTechAppMongoDbContext>();
 
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+    .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
+        configuration["MongoDbSettings:ConnectionString"],
+        configuration["MongoDbSettings:DatabaseName"])
+    .AddDefaultTokenProviders();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
-IServiceScope scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-
-EcoTechAppMongoDbContext mongoDbContext = scope.ServiceProvider.GetRequiredService<EcoTechAppMongoDbContext>();
-mongoDbContext.Execute();
-
 
 app.UseCors(configurePolicy: c =>
 {
@@ -35,6 +48,7 @@ app.UseCors(configurePolicy: c =>
 app.UseRouting()
     .UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

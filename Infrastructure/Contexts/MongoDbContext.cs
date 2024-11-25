@@ -9,7 +9,7 @@ namespace EcoTech.Contexts
     {
         public MongoDbContext(IOptions<MongoDBSettings> options)
         {
-            var client = new MongoClient(options.Value.MongoConnectionString);
+            var client = new MongoClient(options.Value.ConnectionString);
             Database = client.GetDatabase(DatabaseName);
         }
 
