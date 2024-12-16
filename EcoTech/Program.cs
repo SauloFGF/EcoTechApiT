@@ -1,8 +1,7 @@
 using AspNetCore.Identity.MongoDbCore.Infrastructure;
-using EcoTech.Configurations;
 using EcoTech.Contexts;
 using EcoTech.Models;
-using Infrastructure.Contexts;
+using Infrastructure.Encrypt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -12,6 +11,9 @@ ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.Configure<MongoDbSettings>(
     configuration.GetSection("MongoDbSettings"));
+
+builder.Services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtSettings>>().Value);
 
 builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
 {

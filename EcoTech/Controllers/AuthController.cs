@@ -16,5 +16,11 @@ namespace EcoTech.Controllers
 
             return Ok(new { AccessToken = token });
         }
+
+        [HttpPost, Route("sing-in"), AllowAnonymous]
+        public async Task<IActionResult> SingInAsync([FromBody] SingInViewModel viewModel, CancellationToken cancellationToken)
+        {
+            return Ok(new { SingIn = viewModel });
+        }
     }
 }
